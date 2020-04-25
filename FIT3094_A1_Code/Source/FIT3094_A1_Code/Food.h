@@ -23,6 +23,8 @@ class FIT3094_A1_CODE_API AFood : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AFood();
+
+	EFoodType GetFoodType() { return m_foodType; }
 	
 protected:
 	// Called when the game starts or when spawned

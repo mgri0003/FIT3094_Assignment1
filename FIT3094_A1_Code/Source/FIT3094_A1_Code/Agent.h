@@ -16,7 +16,9 @@ enum class EAgentType
 	MAX_COUNT
 };
 
+//forward declaration
 class ALevelGenerator;
+enum class EFoodType;
 
 #define AGENT_MAX_HEALTH (50)
 #define AGENT_SPEED (500) //100 #2fix_changeback
@@ -64,6 +66,8 @@ protected:
 	void OnDeath();
 
 	void AttemptEatFoodAtNode(GridNode* node);
+
+	EFoodType GetFoodTypeCanEat();
 	
 public:	
 	// Called every frame

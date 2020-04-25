@@ -13,7 +13,7 @@ ALevelGenerator::ALevelGenerator()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-TArray<GridNode*> ALevelGenerator::CalculateAgentPath(GridNode* startNode)
+TArray<GridNode*> ALevelGenerator::CalculateAgentPath(GridNode* startNode, const EFoodType targetFoodType)
 {
 #if ENABLE_DEBUG_MESSAGES
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, FString::Printf(TEXT("CalculateAgentPath() Called!")));
@@ -42,7 +42,8 @@ TArray<GridNode*> ALevelGenerator::CalculateAgentPath(GridNode* startNode)
 			closedList.Add(currentNode);
 
 			//Return path if the node is food!
-			if (currentNode->HasFood())
+			//and the food type matches our target food type (putting check here just incase it slips through)
+			if (currentNode->HasFood() && currentNode->GetFood()->GetFoodType() == targetFoodType)
 			{
 				//populate the return values
 				GridNode* tempNode = currentNode;
@@ -76,7 +77,7 @@ TArray<GridNode*> ALevelGenerator::CalculateAgentPath(GridNode* startNode)
 			}
 
 			//For Each (nextNode accessible from currentNode)
-			TArray<GridNode*> accessibleNodes = GetAccessibleNodes(currentNode, startNode);
+			TArray<GridNode*> accessibleNodes = GetAccessibleNodes(currentNode, startNode, targetFoodType);
 			for (GridNode* nextNode : accessibleNodes)
 			{
 				//If (nextNode is in ClosedList)
@@ -385,7 +386,7 @@ GridNode* ALevelGenerator::RemoveNodeWithSmallestFitness(TArray<GridNode*>& open
 	return retVal;
 }
 
-TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode, GridNode* startNode)
+TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode, GridNode* startNode, const EFoodType targetFoodType)
 {
 	TArray<GridNode*> retVal;
 
@@ -405,7 +406,7 @@ TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode, Gri
 	{
 		if (gn)
 		{
-			if (IsNodeAccessible(gn, startNode))
+			if (IsNodeAccessible(gn, startNode, targetFoodType))
 			{
 				retVal.Add(gn);
 			}
@@ -415,7 +416,7 @@ TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode, Gri
 	return retVal;
 }
 
-bool ALevelGenerator::IsNodeAccessible(GridNode* node, GridNode* startNode)
+bool ALevelGenerator::IsNodeAccessible(GridNode* node, GridNode* startNode, const EFoodType targetFoodType)
 {
 	bool retval = true;
 
@@ -425,6 +426,13 @@ bool ALevelGenerator::IsNodeAccessible(GridNode* node, GridNode* startNode)
 		if (node->IsTraversable())
 		{
 			//if its still accessible, do additional checks...
+
+			//if this food is not the target food type
+			if (node->HasFood() && node->GetFood()->GetFoodType() != targetFoodType)
+			{
+				//avoid it!
+				retval = false;
+			}
 
 			//if an agent is chilling on that node
 			if (node->IsAgentIdling())

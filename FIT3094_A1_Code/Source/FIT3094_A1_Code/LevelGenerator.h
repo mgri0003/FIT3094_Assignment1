@@ -62,7 +62,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Entities")
 		TSubclassOf<AActor> Agent2Blueprint;
 
-	TArray<GridNode*> CalculateAgentPath(GridNode* startNode);
+	TArray<GridNode*> CalculateAgentPath(GridNode* startNode, const EFoodType targetFoodType);
 
 
 	GridNode* GetGridNodeFromWorldArray(int x, int y);
@@ -85,8 +85,8 @@ protected:
 
 	float CalculateDistanceBetween(GridNode* first, GridNode* second);
 	GridNode* RemoveNodeWithSmallestFitness(TArray<GridNode*>& openList);
-	TArray<GridNode*> GetAccessibleNodes(GridNode* currentNode, GridNode* startNode);
-	bool IsNodeAccessible(GridNode* node, GridNode* startNode);
+	TArray<GridNode*> GetAccessibleNodes(GridNode* currentNode, GridNode* startNode, const EFoodType targetFoodType);
+	bool IsNodeAccessible(GridNode* node, GridNode* startNode, const EFoodType targetFoodType);
 
 	void SpawnAgents();
 	void SpawnFood();

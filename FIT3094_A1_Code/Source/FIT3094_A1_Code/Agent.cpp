@@ -32,7 +32,7 @@ void AAgent::RecalculatePathToFood()
 	if (GetLevelGenerator())
 	{
 		GridNode* startingNode = GetLevelGenerator()->GetGridNodeFromWorldArray(GetActorPositionAsGridPosition());
-		m_currentPath = GetLevelGenerator()->CalculateAgentPath(startingNode);
+		m_currentPath = GetLevelGenerator()->CalculateAgentPath(startingNode, GetFoodTypeCanEat());
 
 		if (HasCurrentPath())
 		{
@@ -170,6 +170,26 @@ void AAgent::AttemptEatFoodAtNode(GridNode* node)
 		//reset health
 		Health = AGENT_MAX_HEALTH;
 	}
+}
+
+EFoodType AAgent::GetFoodTypeCanEat()
+{
+	switch (m_agentType)
+	{
+		case EAgentType::CARNIVORE:
+		{
+			return EFoodType::MEAT;
+		}
+		break;
+
+		case EAgentType::VEGETARIAN:
+		{
+			return EFoodType::VEGETABLE;
+		}
+		break;
+	}
+	
+	return EFoodType::MAX_COUNT;
 }
 
 // Called every frame
