@@ -477,13 +477,14 @@ bool ALevelGenerator::IsNodeAccessible(GridNode* node, GridNode* startNode, cons
 
 void ALevelGenerator::SpawnAgents()
 {
-	if (AgentBlueprint)
+	if (AgentBlueprint && Agent2Blueprint)
 	{
 		for (int i = 0; i < NUM_AGENTS; i++)
 		{
 			int RandXPos = 0;
 			int RandYPos = 0;
 			bool isFree = false;
+			TSubclassOf<AActor> spawnableActor = FMath::RandBool() ? AgentBlueprint : Agent2Blueprint;
 
 			while (!isFree) {
 				RandXPos = FMath::RandRange(0, MapSizeX - 1);
@@ -496,7 +497,7 @@ void ALevelGenerator::SpawnAgents()
 			}
 
 			FVector Position(RandXPos * GRID_SIZE_WORLD, RandYPos * GRID_SIZE_WORLD, 20);
-			AAgent* Agent = GetWorld()->SpawnActor<AAgent>(AgentBlueprint, Position, FRotator::ZeroRotator);
+			AAgent* Agent = GetWorld()->SpawnActor<AAgent>(spawnableActor, Position, FRotator::ZeroRotator);
 
 			WorldArray[RandXPos][RandYPos]->IdleObjectAtLocation = Agent;
 
@@ -509,13 +510,14 @@ void ALevelGenerator::SpawnAgents()
 
 void ALevelGenerator::SpawnFood()
 {
-	if (FoodBlueprint)
+	if (FoodBlueprint && Food2Blueprint)
 	{
 		for (int i = 0; i < NUM_FOOD; i++)
 		{
 			int RandXPos = 0;
 			int RandYPos = 0;
 			bool isFree = false;
+			TSubclassOf<AActor> spawnableActor = FMath::RandBool() ? FoodBlueprint : Food2Blueprint;
 
 			while (!isFree) {
 				RandXPos = FMath::RandRange(0, MapSizeX - 1);
@@ -528,7 +530,7 @@ void ALevelGenerator::SpawnFood()
 			}
 
 			FVector Position(RandXPos * GRID_SIZE_WORLD, RandYPos * GRID_SIZE_WORLD, 20);
-			AFood* NewFood = GetWorld()->SpawnActor<AFood>(FoodBlueprint, Position, FRotator::ZeroRotator);
+			AFood* NewFood = GetWorld()->SpawnActor<AFood>(spawnableActor, Position, FRotator::ZeroRotator);
 
 			WorldArray[RandXPos][RandYPos]->IdleObjectAtLocation = NewFood;
 			UneatenFoodActors.Add(NewFood);
