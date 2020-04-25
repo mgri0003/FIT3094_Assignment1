@@ -39,16 +39,20 @@ void AAgent::RecalculatePathToFood()
 			//keep track of agent (if we steal their path)
 			AAgent* robbedAgent = nullptr;
 
+			//if another agent was using the last node in this path...
+			GridNode* lastGridNode = GetLastGridNodeOnCurrentPath();
+			if (lastGridNode)
+			{
+				//(then we just stole another agent's food path)
+				if (lastGridNode->IsAgentUsing() && lastGridNode->GetAgentUsing() != this)
+				{
+					robbedAgent = lastGridNode->GetAgentUsing();
+				}
+			}
+
 			//the entire path's grid nodes are now in use by this agent!
 			for (GridNode* gn : m_currentPath)
 			{
-				//if an agent was one of the nodes in this path...
-				if (gn->IsAgentUsing() && gn->GetAgentUsing() != this)
-				{
-					ensureAlwaysMsgf(robbedAgent == nullptr, TEXT("we should only have robbed a single agent!"));
-					robbedAgent = gn->GetAgentUsing();
-				}
-
 				gn->SetAgentUsing(this);
 			}
 
@@ -78,6 +82,11 @@ FVector2D AAgent::GetActorPositionAsGridPosition()
 	actorPos2D.X = GetActorLocation().X;
 	actorPos2D.Y = GetActorLocation().Y;
 	return UtilityFunctions::LocationToGridPosition(actorPos2D);
+}
+
+GridNode* AAgent::GetLastGridNodeOnCurrentPath()
+{
+	return GetGridNodeOnCurrentPath(GetCurrentPathCount() - 1);
 }
 
 GridNode* AAgent::GetGridNodeOnCurrentPath(int idx)
@@ -146,6 +155,17 @@ void AAgent::OnReachedNode(GridNode* reachedNode)
 	if (reachedNode->HasFood())
 	{
 		AttemptEatFoodAtNode(reachedNode);
+	}
+	
+	//if a path is still present, check if there is still food at the end of the path...
+	if (HasCurrentPath())
+	{
+		ensureAlwaysMsgf(GetLastGridNodeOnCurrentPath()->HasFood(), TEXT("An agent has stolen our food but didnt make us recalculate!?!?"));
+		if (!GetLastGridNodeOnCurrentPath()->HasFood())
+		{
+			//should recalc path
+			RecalculatePathToFood();
+		}
 	}
 }
 

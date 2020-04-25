@@ -46,6 +46,7 @@ public:
 
 	FVector2D GetActorPositionAsGridPosition();
 
+	GridNode* GetLastGridNodeOnCurrentPath();
 	GridNode* GetGridNodeOnCurrentPath(int idx);
 	bool HasCurrentPath() { return m_currentPath.Num() > 0; }
 	void ResetCurrentPath();
