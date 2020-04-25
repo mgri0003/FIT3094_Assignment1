@@ -9,6 +9,7 @@
 #define GRID_SIZE_WORLD (100) // Grid Size in World Units
 
 #define ENABLE_DEBUG_MESSAGES 0
+#define ENABLE_DEBUG_DRAW 0
 #define ENABLE_DEBUG_AGENT_STATS 1
 
 static class FIT3094_A1_CODE_API UtilityFunctions

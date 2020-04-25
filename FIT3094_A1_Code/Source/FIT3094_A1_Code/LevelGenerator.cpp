@@ -182,6 +182,7 @@ void ALevelGenerator::Tick(float DeltaTime)
 	}
 #endif
 
+#if ENABLE_DEBUG_DRAW
 	for (int x = 0; x < MapSizeX; ++x)
 	{
 		for (int y = 0; y < MapSizeX; ++y)
@@ -197,6 +198,7 @@ void ALevelGenerator::Tick(float DeltaTime)
 			}
 		}
 	}
+#endif
 
 	// Should spawn more food if there are not the right number
 	//when uneated food runs out
@@ -418,8 +420,6 @@ TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode, Gri
 
 bool ALevelGenerator::IsNodeAccessible(GridNode* node, GridNode* startNode, const EFoodType targetFoodType)
 {
-	bool retval = true;
-
 	if (node)
 	{
 		//check grid node type first!
@@ -431,14 +431,14 @@ bool ALevelGenerator::IsNodeAccessible(GridNode* node, GridNode* startNode, cons
 			if (node->HasFood() && node->GetFood()->GetFoodType() != targetFoodType)
 			{
 				//avoid it!
-				retval = false;
+				return false;
 			}
 
 			//if an agent is chilling on that node
 			if (node->IsAgentIdling())
 			{
 				//avoid it!
-				retval = false;
+				return false;
 			}
 
 			//if the path is in use
@@ -447,20 +447,20 @@ bool ALevelGenerator::IsNodeAccessible(GridNode* node, GridNode* startNode, cons
 				//its a food node!
 				if (node->HasFood())
 				{
-					//if we arent closer
+					//if we arent closer than the agent currently using it
 					FVector2D startNodeLocation2D = startNode->GetGridNodeActorLocation();
 					FVector2D nodeLocation2D = node->GetGridNodeActorLocation();
 					float distFromStartnode = FVector::Dist2D(FVector(startNodeLocation2D.X, startNodeLocation2D.Y, 0), FVector(nodeLocation2D.X, nodeLocation2D.Y, 0));
 					if (!node->IsDistanceCloserThanAgentUsing(distFromStartnode))
 					{
 						//avoid it!
-						retval = false;
+						return false;
 					}
 				}
 				else //always avoid non-food in-use nodes
 				{
 					//avoid it!
-					retval = false;
+					return false;
 				}
 			}
 		}
@@ -468,11 +468,11 @@ bool ALevelGenerator::IsNodeAccessible(GridNode* node, GridNode* startNode, cons
 		{
 			//this node is not traversable
 			//avoid it!
-			retval = false;
+			return false;
 		}
 	}
 
-	return retval;
+	return true;
 }
 
 void ALevelGenerator::SpawnAgents()

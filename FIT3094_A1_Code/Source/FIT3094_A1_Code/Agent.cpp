@@ -217,7 +217,7 @@ void AAgent::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//DEBUG
+#if ENABLE_DEBUG_DRAW
 	for (GridNode* gn : m_currentPath)
 	{
 		if (gn)
@@ -226,7 +226,7 @@ void AAgent::Tick(float DeltaTime)
 			DrawDebugSphere(GetWorld(), FVector(debugLocation2D.X, debugLocation2D.Y,0) , 50.0f, 5, FColor::Magenta, false, -1.0f, 0, 2.0f);
 		}
 	}
-
+#endif
 
 	if(m_currentPath.Num() > 0)
 	{
