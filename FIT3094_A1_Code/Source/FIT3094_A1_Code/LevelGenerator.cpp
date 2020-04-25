@@ -382,8 +382,8 @@ GridNode* ALevelGenerator::RemoveNodeWithSmallestFitness(TArray<GridNode*>& open
 TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode)
 {
 	TArray<GridNode*> retVal;
-	//GridNode* tempNode = nullptr;
 
+	//prepare nodes to process
 	TArray<GridNode*> nodesToProcess;
 
 	//LEFT
@@ -399,19 +399,7 @@ TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode)
 	{
 		if (gn)
 		{
-			bool canBeAccessed = gn->GridType != GridNode::Wall;
-
-			//if its still accessible, do additional checks
-			if (canBeAccessed)
-			{
-				//if an agent is chilling on that node
-				if (gn->IsAgentIdling())
-				{
-					canBeAccessed = false;
-				}
-			}
-
-			if (canBeAccessed)
+			if (IsNodeAccessible(gn))
 			{
 				retVal.Add(gn);
 			}
@@ -419,6 +407,32 @@ TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode)
 	}
 
 	return retVal;
+}
+
+bool ALevelGenerator::IsNodeAccessible(GridNode* node)
+{
+	bool retval = true;
+
+	if (node)
+	{
+		//check grid node type first!
+		if (node->GridType != GridNode::Wall)
+		{
+			//if its still accessible, do additional checks...
+
+			//if an agent is chilling on that node
+			if (node->IsAgentIdling())
+			{
+				retval = false;
+			}
+		}
+		else
+		{
+			retval = false;
+		}
+	}
+
+	return retval;
 }
 
 void ALevelGenerator::SpawnAgents()

@@ -83,6 +83,7 @@ protected:
 	float CalculateDistanceBetween(GridNode* first, GridNode* second);
 	GridNode* RemoveNodeWithSmallestFitness(TArray<GridNode*>& openList);
 	TArray<GridNode*> GetAccessibleNodes(GridNode* currentNode);
+	bool IsNodeAccessible(GridNode* node);
 
 	void SpawnAgents();
 	void SpawnFood();
