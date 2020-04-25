@@ -7,6 +7,7 @@
 #include "Food.h"
 #include "GameFramework/Actor.h"
 #include "GridNode.h"
+#include "Utility.h"
 #include "LevelGenerator.generated.h"
 
 UCLASS()
@@ -14,15 +15,10 @@ class FIT3094_A1_CODE_API ALevelGenerator : public AActor
 {
 	GENERATED_BODY()
 
-	// Maximum Size for World Map
-	static const int MAX_MAP_SIZE = 256;
-
 public:
 
-	// Grid Size in World Units
-	static const int GRID_SIZE_WORLD = 100;
 	static const int NUM_FOOD = 25;
-	static const int NUM_AGENTS = 5;
+	static const int NUM_AGENTS = 1; //5 //#2fix_implement
 	
 	// Sets default values for this actor's properties
 	ALevelGenerator();
@@ -39,7 +35,12 @@ public:
 	GridNode* WorldArray[MAX_MAP_SIZE][MAX_MAP_SIZE];
 
 	UPROPERTY()
-		TArray<AFood*> FoodActors;
+		TArray<AFood*> UneatenFoodActors;
+	UPROPERTY()
+		TArray<AFood*> EatenFoodActors;
+
+	UPROPERTY()
+		TArray<AAgent*> AgentActors;
 
 	// Actors for spawning into the world
 	UPROPERTY(EditAnywhere, Category = "Entities")
@@ -57,6 +58,18 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Entities")
 		TSubclassOf<AActor> AgentBlueprint;
 
+	TArray<GridNode*> CalculateAgentPath(GridNode* startNode);
+
+
+	GridNode* GetGridNodeFromWorldArray(int x, int y);
+	GridNode* GetGridNodeFromWorldArray(FVector2D gridPos);
+
+	//EVENTS
+	void Event_NotifyAllAgentsToRecalculatePaths();
+	void Event_OnFoodSpawned();
+	//ONAGENTDEATH //#2fix_implement
+	void Event_OnFoodEaten(AFood* eatenFood);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -67,6 +80,13 @@ protected:
 	void ResetAllNodes();
 
 	float CalculateDistanceBetween(GridNode* first, GridNode* second);
+	GridNode* RemoveNodeWithSmallestFitness(TArray<GridNode*>& openList);
+	TArray<GridNode*> GetAccessibleNodes(GridNode* currentNode);
+
+	void SpawnAgents();
+	void SpawnFood();
+
+
 
 public:	
 	// Called every frame

@@ -2,6 +2,8 @@
 
 
 #include "GridNode.h"
+#include "Food.h"
+#include "Utility.h"
 
 GridNode::GridNode()
 {
@@ -35,4 +37,31 @@ float GridNode::GetTravelCost() const
 		default:
 			return 1;
 	}
+}
+
+void GridNode::CalculateH_Dijkstra()
+{
+	H = GetTravelCost();
+}
+
+AFood* GridNode::GetFood()
+{
+	AFood* retval = nullptr;
+
+	if (ObjectAtLocation != nullptr)
+	{
+		retval = Cast<AFood>(ObjectAtLocation);
+	}
+
+	return retval;
+}
+
+bool GridNode::HasFood()
+{
+	return GetFood() != nullptr;
+}
+
+FVector2D GridNode::GetGridNodeActorLocation()
+{
+	return UtilityFunctions::GridPositionToLocation(X, Y);
 }

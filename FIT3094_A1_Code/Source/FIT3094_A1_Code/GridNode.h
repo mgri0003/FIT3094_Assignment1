@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+class AFood;
+
 /**
  * 
  */
@@ -44,4 +46,16 @@ public:
 
 	// Object at current location
 	AActor* ObjectAtLocation;
+
+	void CalculateFitness()
+	{
+		F = (float)G + H;
+	}
+
+	void CalculateH_Dijkstra();
+
+	AFood* GetFood();
+	bool HasFood();
+
+	FVector2D GetGridNodeActorLocation();
 };
