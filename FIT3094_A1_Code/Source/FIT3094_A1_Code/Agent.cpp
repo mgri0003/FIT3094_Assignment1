@@ -23,7 +23,9 @@ AAgent::AAgent()
 
 void AAgent::RecalculatePathToFood()
 {
+#if ENABLE_DEBUG_MESSAGES
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, FString::Printf(TEXT("RecalculatePathToFood() Called!")));
+#endif
 
 	ResetCurrentPath();
 
@@ -76,7 +78,9 @@ GridNode* AAgent::GetGridNodeOnCurrentPath(int idx)
 
 void AAgent::ResetCurrentPath()
 {
+#if ENABLE_DEBUG_MESSAGES
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, FString::Printf(TEXT("Agent's ResetPath() Called!")));
+#endif
 
 	//the entire path's grid nodes are no longer in use by this agent!
 	for (GridNode* gn : m_currentPath)
@@ -139,8 +143,9 @@ void AAgent::AttemptEatFoodAtNode(GridNode* node)
 {
 	if (node)
 	{
+#if ENABLE_DEBUG_MESSAGES
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("AAgent::AttemptEatFoodAtNode; Agent Successfully Ate Food!")));
-
+#endif
 		//food eaten!!!
 		GetLevelGenerator()->Event_OnFoodEaten(node->GetFood());
 

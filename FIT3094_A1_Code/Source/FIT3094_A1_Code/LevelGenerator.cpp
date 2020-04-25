@@ -15,7 +15,9 @@ ALevelGenerator::ALevelGenerator()
 
 TArray<GridNode*> ALevelGenerator::CalculateAgentPath(GridNode* startNode)
 {
+#if ENABLE_DEBUG_MESSAGES
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, FString::Printf(TEXT("CalculateAgentPath() Called!")));
+#endif
 
 	TArray<GridNode*> retVal;
 
@@ -67,8 +69,9 @@ TArray<GridNode*> ALevelGenerator::CalculateAgentPath(GridNode* startNode)
 					}
 				}
 
+#if ENABLE_DEBUG_MESSAGES
 				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("CalculateAgentPath(); Path Generation Success!")));
-
+#endif
 				return retVal; //no return value, path has already been made!
 			}
 
@@ -149,7 +152,9 @@ TArray<GridNode*> ALevelGenerator::CalculateAgentPath(GridNode* startNode)
 		}
 	}
 
+#if ENABLE_DEBUG_MESSAGES
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("CalculateAgentPath(); Path Generation Failed!")));
+#endif
 	return retVal;
 	//Return null --- failed to find a path!
 }
@@ -165,7 +170,7 @@ void ALevelGenerator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//DEBUG
+#if ENABLE_DEBUG_AGENT_STATS
 	for (AAgent* agent : AgentActors)
 	{
 		if (agent)
@@ -174,6 +179,7 @@ void ALevelGenerator::Tick(float DeltaTime)
 			GEngine->AddOnScreenDebugMessage(-1, -1, FColor::White, FString::Printf(TEXT("Agent Health: %d | GridPos: %d, %d"), agent->Health, (int)agentGridPos.X, (int)agentGridPos.Y) );
 		}
 	}
+#endif
 
 	for (int x = 0; x < MapSizeX; ++x)
 	{
