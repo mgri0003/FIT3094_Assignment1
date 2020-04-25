@@ -21,7 +21,7 @@ class ALevelGenerator;
 enum class EFoodType;
 
 #define AGENT_MAX_HEALTH (50)
-#define AGENT_SPEED (500) //100 #2fix_changeback
+#define AGENT_SPEED (100)
 #define AGENT_TOLERANCE (20)
 
 
