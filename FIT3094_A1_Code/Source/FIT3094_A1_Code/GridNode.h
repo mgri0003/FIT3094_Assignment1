@@ -45,7 +45,7 @@ public:
 	GridNode* Parent;
 
 	// Object at current location
-	AActor* ObjectAtLocation;
+	AActor* IdleObjectAtLocation;
 
 	void CalculateFitness()
 	{
@@ -58,4 +58,6 @@ public:
 	bool HasFood();
 
 	FVector2D GetGridNodeActorLocation();
+
+	bool IsAgentIdling();
 };

@@ -67,6 +67,7 @@ public:
 	//EVENTS
 	void Event_NotifyAllAgentsToRecalculatePaths();
 	void Event_OnFoodSpawned();
+	void Event_OnAgentDeath(AAgent* deadAgent);
 	//ONAGENTDEATH //#2fix_implement
 	void Event_OnFoodEaten(AFood* eatenFood);
 

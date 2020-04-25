@@ -175,6 +175,22 @@ void ALevelGenerator::Tick(float DeltaTime)
 		}
 	}
 
+	for (int x = 0; x < MapSizeX; ++x)
+	{
+		for (int y = 0; y < MapSizeX; ++y)
+		{
+			GridNode* gridnode = GetGridNodeFromWorldArray(x, y);
+			if (gridnode)
+			{
+				if (gridnode->IdleObjectAtLocation)
+				{
+					FVector2D debugLocation2D = gridnode->GetGridNodeActorLocation();
+					DrawDebugSphere(GetWorld(), FVector(debugLocation2D.X, debugLocation2D.Y, 0), 100.0f, 5, FColor::Orange, false, -1.0f, 0, 2.0f);
+				}
+			}
+		}
+	}
+
 	// Should spawn more food if there are not the right number
 	//when uneated food runs out
 	if (UneatenFoodActors.Num() == 0)
@@ -385,6 +401,16 @@ TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode)
 		{
 			bool canBeAccessed = gn->GridType != GridNode::Wall;
 
+			//if its still accessible, do additional checks
+			if (canBeAccessed)
+			{
+				//if an agent is chilling on that node
+				if (gn->IsAgentIdling())
+				{
+					canBeAccessed = false;
+				}
+			}
+
 			if (canBeAccessed)
 			{
 				retVal.Add(gn);
@@ -409,7 +435,7 @@ void ALevelGenerator::SpawnAgents()
 				RandXPos = FMath::RandRange(0, MapSizeX - 1);
 				RandYPos = FMath::RandRange(0, MapSizeY - 1);
 
-				if (WorldArray[RandXPos][RandYPos]->GridType == GridNode::Open && WorldArray[RandXPos][RandYPos]->ObjectAtLocation == nullptr)
+				if (WorldArray[RandXPos][RandYPos]->GridType == GridNode::Open && WorldArray[RandXPos][RandYPos]->IdleObjectAtLocation == nullptr)
 				{
 					isFree = true;
 				}
@@ -418,7 +444,7 @@ void ALevelGenerator::SpawnAgents()
 			FVector Position(RandXPos * GRID_SIZE_WORLD, RandYPos * GRID_SIZE_WORLD, 20);
 			AAgent* Agent = GetWorld()->SpawnActor<AAgent>(AgentBlueprint, Position, FRotator::ZeroRotator);
 
-			WorldArray[RandXPos][RandYPos]->ObjectAtLocation = Agent;
+			WorldArray[RandXPos][RandYPos]->IdleObjectAtLocation = Agent;
 
 
 			Agent->SetLevelGenerator(this);
@@ -441,7 +467,7 @@ void ALevelGenerator::SpawnFood()
 				RandXPos = FMath::RandRange(0, MapSizeX - 1);
 				RandYPos = FMath::RandRange(0, MapSizeY - 1);
 
-				if (WorldArray[RandXPos][RandYPos]->GridType == GridNode::Open && WorldArray[RandXPos][RandYPos]->ObjectAtLocation == nullptr)
+				if (WorldArray[RandXPos][RandYPos]->GridType == GridNode::Open && WorldArray[RandXPos][RandYPos]->IdleObjectAtLocation == nullptr)
 				{
 					isFree = true;
 				}
@@ -450,7 +476,7 @@ void ALevelGenerator::SpawnFood()
 			FVector Position(RandXPos * GRID_SIZE_WORLD, RandYPos * GRID_SIZE_WORLD, 20);
 			AFood* NewFood = GetWorld()->SpawnActor<AFood>(FoodBlueprint, Position, FRotator::ZeroRotator);
 
-			WorldArray[RandXPos][RandYPos]->ObjectAtLocation = NewFood;
+			WorldArray[RandXPos][RandYPos]->IdleObjectAtLocation = NewFood;
 			UneatenFoodActors.Add(NewFood);
 		}
 	}
@@ -478,6 +504,18 @@ void ALevelGenerator::Event_OnFoodSpawned()
 	Event_NotifyAllAgentsToRecalculatePaths();
 }
 
+void ALevelGenerator::Event_OnAgentDeath(AAgent* deadAgent)
+{
+	if (deadAgent)
+	{
+		//remoev dead agent of arary
+		AgentActors.Remove(deadAgent);
+
+		//notify all agents that a new path may be available
+		Event_NotifyAllAgentsToRecalculatePaths();
+	}
+}
+
 void ALevelGenerator::Event_OnFoodEaten(AFood* eatenFood)
 {
 	if (eatenFood)
@@ -495,7 +533,7 @@ void ALevelGenerator::Event_OnFoodEaten(AFood* eatenFood)
 			GridNode* foodNode = GetGridNodeFromWorldArray(UtilityFunctions::LocationToGridPosition(foodNodeLocation.X, foodNodeLocation.Y));
 			if (foodNode && foodNode->HasFood())
 			{
-				foodNode->ObjectAtLocation = nullptr;
+				foodNode->IdleObjectAtLocation = nullptr;
 			}
 
 			EatenFoodActors[0]->Destroy();

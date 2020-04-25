@@ -52,6 +52,7 @@ protected:
 	FTimerHandle TimerHandle;
 
 	void OnReachedNode(GridNode* reachedNode);
+	void OnDeath();
 
 	void AttemptEatFoodAtNode(GridNode* node);
 	

@@ -31,6 +31,20 @@ void AAgent::RecalculatePathToFood()
 	{
 		GridNode* startingNode = GetLevelGenerator()->GetGridNodeFromWorldArray(GetActorPositionAsGridPosition());
 		m_currentPath = GetLevelGenerator()->CalculateAgentPath(startingNode);
+
+		if (HasPath())
+		{
+			//if we have path, we are not longer at this location
+			if (startingNode->IdleObjectAtLocation == this)
+			{
+				startingNode->IdleObjectAtLocation = nullptr;
+			}
+		}
+		else
+		{
+			//we dont haev a path, we are still chilling here..
+			startingNode->IdleObjectAtLocation = this;
+		}
 	}
 }
 
@@ -76,8 +90,7 @@ void AAgent::DecreaseHealth()
 
 	if(Health <= 0)
 	{
-		GetWorldTimerManager().ClearTimer(TimerHandle);
-		Destroy();
+		OnDeath();
 	}
 }
 
@@ -87,6 +100,14 @@ void AAgent::OnReachedNode(GridNode* reachedNode)
 	{
 		AttemptEatFoodAtNode(reachedNode);
 	}
+}
+
+void AAgent::OnDeath()
+{
+	GetLevelGenerator()->Event_OnAgentDeath(this);
+
+	GetWorldTimerManager().ClearTimer(TimerHandle);
+	Destroy();
 }
 
 void AAgent::AttemptEatFoodAtNode(GridNode* node)

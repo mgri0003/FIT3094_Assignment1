@@ -4,6 +4,7 @@
 #include "GridNode.h"
 #include "Food.h"
 #include "Utility.h"
+#include "Agent.h"
 
 GridNode::GridNode()
 {
@@ -12,7 +13,7 @@ GridNode::GridNode()
 
 	GridType = Open;
 	Parent = nullptr;
-	ObjectAtLocation = nullptr;
+	IdleObjectAtLocation = nullptr;
 
 	G = 0;
 	H = 0;
@@ -48,9 +49,9 @@ AFood* GridNode::GetFood()
 {
 	AFood* retval = nullptr;
 
-	if (ObjectAtLocation != nullptr)
+	if (IdleObjectAtLocation != nullptr)
 	{
-		retval = Cast<AFood>(ObjectAtLocation);
+		retval = Cast<AFood>(IdleObjectAtLocation);
 	}
 
 	return retval;
@@ -64,4 +65,14 @@ bool GridNode::HasFood()
 FVector2D GridNode::GetGridNodeActorLocation()
 {
 	return UtilityFunctions::GridPositionToLocation(X, Y);
+}
+
+bool GridNode::IsAgentIdling()
+{
+	if (IdleObjectAtLocation != nullptr)
+	{
+		return Cast<AAgent>(IdleObjectAtLocation) != nullptr;
+	}
+
+	return false;
 }
