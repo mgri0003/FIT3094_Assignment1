@@ -25,14 +25,14 @@ void AAgent::RecalculatePathToFood()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, FString::Printf(TEXT("RecalculatePathToFood() Called!")));
 
-	ResetPath();
+	ResetCurrentPath();
 
 	if (GetLevelGenerator())
 	{
 		GridNode* startingNode = GetLevelGenerator()->GetGridNodeFromWorldArray(GetActorPositionAsGridPosition());
 		m_currentPath = GetLevelGenerator()->CalculateAgentPath(startingNode);
 
-		if (HasPath())
+		if (HasCurrentPath())
 		{
 			//if we have path, we are not longer at this location
 			if (startingNode->IdleObjectAtLocation == this)
@@ -56,7 +56,7 @@ FVector2D AAgent::GetActorPositionAsGridPosition()
 	return UtilityFunctions::LocationToGridPosition(actorPos2D);
 }
 
-GridNode* AAgent::GetNodeOnPath(int idx)
+GridNode* AAgent::GetNodeOnCurrentPath(int idx)
 {
 	GridNode* retVal = nullptr;
 
@@ -68,7 +68,7 @@ GridNode* AAgent::GetNodeOnPath(int idx)
 	return retVal;
 }
 
-void AAgent::ResetPath()
+void AAgent::ResetCurrentPath()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, FString::Printf(TEXT("Agent's ResetPath() Called!")));
 	m_currentPath.Empty();
@@ -142,7 +142,7 @@ void AAgent::Tick(float DeltaTime)
 
 	if(m_currentPath.Num() > 0)
 	{
-		GridNode* targetNode = GetNodeOnPath(0);
+		GridNode* targetNode = GetNodeOnCurrentPath(0);
 
 		FVector currentPosition = GetActorLocation();
 		

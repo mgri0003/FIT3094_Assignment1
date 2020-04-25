@@ -12,7 +12,7 @@ class ALevelGenerator;
 
 
 #define AGENT_MAX_HEALTH (50)
-#define AGENT_SPEED (100)
+#define AGENT_SPEED (1000) //100 #2fix_changeback
 #define AGENT_TOLERANCE (20)
 
 
@@ -37,9 +37,10 @@ public:
 
 	FVector2D GetActorPositionAsGridPosition();
 
-	GridNode* GetNodeOnPath(int idx);
-	bool HasPath() { return m_currentPath.Num() > 0; }
-	void ResetPath();
+	GridNode* GetNodeOnCurrentPath(int idx);
+	bool HasCurrentPath() { return m_currentPath.Num() > 0; }
+	void ResetCurrentPath();
+	int GetCurrentPathCount() { return m_currentPath.Num(); }
 
 protected:
 	// Called when the game starts or when spawned

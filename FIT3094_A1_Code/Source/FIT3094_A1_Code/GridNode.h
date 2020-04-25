@@ -60,4 +60,6 @@ public:
 	FVector2D GetGridNodeActorLocation();
 
 	bool IsAgentIdling();
+
+	bool IsTraversable();
 };

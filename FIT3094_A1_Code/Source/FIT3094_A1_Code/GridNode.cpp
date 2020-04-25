@@ -76,3 +76,8 @@ bool GridNode::IsAgentIdling()
 
 	return false;
 }
+
+bool GridNode::IsTraversable()
+{
+	return GridType != GridNode::Wall;
+}

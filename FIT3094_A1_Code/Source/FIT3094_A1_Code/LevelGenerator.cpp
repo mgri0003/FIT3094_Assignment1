@@ -416,18 +416,21 @@ bool ALevelGenerator::IsNodeAccessible(GridNode* node)
 	if (node)
 	{
 		//check grid node type first!
-		if (node->GridType != GridNode::Wall)
+		if (node->IsTraversable())
 		{
 			//if its still accessible, do additional checks...
 
 			//if an agent is chilling on that node
 			if (node->IsAgentIdling())
 			{
+				//avoid it!
 				retval = false;
 			}
 		}
-		else
+		else 
 		{
+			//this node is not traversable
+			//avoid it!
 			retval = false;
 		}
 	}
@@ -505,7 +508,7 @@ void ALevelGenerator::Event_NotifyAllAgentsToRecalculatePaths()
 	{
 		if (agent)
 		{
-			if (!agent->HasPath())
+			if (!agent->HasCurrentPath())
 			{
 				agent->RecalculatePathToFood();
 			}
