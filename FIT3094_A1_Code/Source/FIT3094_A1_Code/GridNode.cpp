@@ -81,3 +81,13 @@ bool GridNode::IsTraversable()
 {
 	return GridType != GridNode::Wall;
 }
+
+void GridNode::SetAgentUsing(AAgent* newAgentUsing)
+{
+	m_agentUsing = newAgentUsing;
+}
+
+bool GridNode::IsAgentUsing()
+{
+	return m_agentUsing != nullptr;
+}

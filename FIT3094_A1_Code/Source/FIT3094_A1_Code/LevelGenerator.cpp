@@ -426,6 +426,13 @@ bool ALevelGenerator::IsNodeAccessible(GridNode* node)
 				//avoid it!
 				retval = false;
 			}
+
+			//if the path is in use
+			if (node->IsAgentUsing())
+			{
+				//avoid it!
+				retval = false;
+			}
 		}
 		else 
 		{

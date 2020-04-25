@@ -18,7 +18,7 @@ class FIT3094_A1_CODE_API ALevelGenerator : public AActor
 public:
 
 	static const int NUM_FOOD = 25;
-	static const int NUM_AGENTS = 1; //5 //#2fix_implement
+	static const int NUM_AGENTS = 5;
 	
 	// Sets default values for this actor's properties
 	ALevelGenerator();

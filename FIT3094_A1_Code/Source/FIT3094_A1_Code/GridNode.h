@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+class AAgent;
 class AFood;
 
 /**
@@ -62,4 +63,11 @@ public:
 	bool IsAgentIdling();
 
 	bool IsTraversable();
+
+	void SetAgentUsing(AAgent* newAgentUsing);
+	bool IsAgentUsing();
+
+private:
+	AAgent* m_agentUsing = nullptr;
+
 };

@@ -37,9 +37,10 @@ public:
 
 	FVector2D GetActorPositionAsGridPosition();
 
-	GridNode* GetNodeOnCurrentPath(int idx);
+	GridNode* GetGridNodeOnCurrentPath(int idx);
 	bool HasCurrentPath() { return m_currentPath.Num() > 0; }
 	void ResetCurrentPath();
+	void RemoveCurrentPathAt(int idx);
 	int GetCurrentPathCount() { return m_currentPath.Num(); }
 
 protected:

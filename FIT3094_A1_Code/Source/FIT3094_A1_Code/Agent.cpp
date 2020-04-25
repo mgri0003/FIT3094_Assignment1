@@ -34,6 +34,12 @@ void AAgent::RecalculatePathToFood()
 
 		if (HasCurrentPath())
 		{
+			//the entire path's grid nodes are now in use by this agent!
+			for (GridNode* gn : m_currentPath)
+			{
+				gn->SetAgentUsing(this);
+			}
+
 			//if we have path, we are not longer at this location
 			if (startingNode->IdleObjectAtLocation == this)
 			{
@@ -56,7 +62,7 @@ FVector2D AAgent::GetActorPositionAsGridPosition()
 	return UtilityFunctions::LocationToGridPosition(actorPos2D);
 }
 
-GridNode* AAgent::GetNodeOnCurrentPath(int idx)
+GridNode* AAgent::GetGridNodeOnCurrentPath(int idx)
 {
 	GridNode* retVal = nullptr;
 
@@ -71,7 +77,26 @@ GridNode* AAgent::GetNodeOnCurrentPath(int idx)
 void AAgent::ResetCurrentPath()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, FString::Printf(TEXT("Agent's ResetPath() Called!")));
+
+	//the entire path's grid nodes are no longer in use by this agent!
+	for (GridNode* gn : m_currentPath)
+	{
+		gn->SetAgentUsing(nullptr);
+	}
+
 	m_currentPath.Empty();
+}
+
+void AAgent::RemoveCurrentPathAt(int idx)
+{
+	GridNode* gn = GetGridNodeOnCurrentPath(idx);
+	if (gn)
+	{
+		//this grid nodes is no longer in use by this agent!
+		gn->SetAgentUsing(nullptr);
+
+		m_currentPath.RemoveAt(idx);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -142,7 +167,7 @@ void AAgent::Tick(float DeltaTime)
 
 	if(m_currentPath.Num() > 0)
 	{
-		GridNode* targetNode = GetNodeOnCurrentPath(0);
+		GridNode* targetNode = GetGridNodeOnCurrentPath(0);
 
 		FVector currentPosition = GetActorLocation();
 		
@@ -160,7 +185,7 @@ void AAgent::Tick(float DeltaTime)
 		{
 			currentPosition = targetPosition;
 			SetActorLocation(currentPosition);
-			m_currentPath.RemoveAt(0);
+			RemoveCurrentPathAt(0);
 
 			OnReachedNode(targetNode);
 		}
