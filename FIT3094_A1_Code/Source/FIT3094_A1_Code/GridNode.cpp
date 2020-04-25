@@ -91,3 +91,24 @@ bool GridNode::IsAgentUsing()
 {
 	return m_agentUsing != nullptr;
 }
+
+float GridNode::GetDistanceOfAgentUsingToThisNode()
+{
+	float retval = 0.0f;
+
+	FVector2D gridNodeLocation2D = GetGridNodeActorLocation();
+
+	if (IsAgentUsing())
+	{
+		retval = FVector::Dist2D(FVector(gridNodeLocation2D.X, gridNodeLocation2D.Y, 0), GetAgentUsing()->GetActorLocation());
+	}
+
+	return retval;
+}
+
+bool GridNode::IsDistanceCloserThanAgentUsing(float dist)
+{
+	//adding tolerance so the agent thats already using this node is more likely to keep it
+	//this should stop weird cases where both agents think they are closer
+	return (dist + AGENT_TOLERANCE) < GetDistanceOfAgentUsingToThisNode();
+}

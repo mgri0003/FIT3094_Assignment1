@@ -68,7 +68,6 @@ public:
 	void Event_NotifyAllAgentsToRecalculatePaths();
 	void Event_OnFoodSpawned();
 	void Event_OnAgentDeath(AAgent* deadAgent);
-	//ONAGENTDEATH //#2fix_implement
 	void Event_OnFoodEaten(AFood* eatenFood);
 
 protected:
@@ -82,8 +81,8 @@ protected:
 
 	float CalculateDistanceBetween(GridNode* first, GridNode* second);
 	GridNode* RemoveNodeWithSmallestFitness(TArray<GridNode*>& openList);
-	TArray<GridNode*> GetAccessibleNodes(GridNode* currentNode);
-	bool IsNodeAccessible(GridNode* node);
+	TArray<GridNode*> GetAccessibleNodes(GridNode* currentNode, GridNode* startNode);
+	bool IsNodeAccessible(GridNode* node, GridNode* startNode);
 
 	void SpawnAgents();
 	void SpawnFood();

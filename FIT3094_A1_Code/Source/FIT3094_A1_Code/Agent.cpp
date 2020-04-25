@@ -36,10 +36,26 @@ void AAgent::RecalculatePathToFood()
 
 		if (HasCurrentPath())
 		{
+			//keep track of agent (if we steal their path)
+			AAgent* robbedAgent = nullptr;
+
 			//the entire path's grid nodes are now in use by this agent!
 			for (GridNode* gn : m_currentPath)
 			{
+				//if an agent was one of the nodes in this path...
+				if (gn->IsAgentUsing() && gn->GetAgentUsing() != this)
+				{
+					ensureAlwaysMsgf(robbedAgent == nullptr, TEXT("we should only have robbed a single agent!"));
+					robbedAgent = gn->GetAgentUsing();
+				}
+
 				gn->SetAgentUsing(this);
+			}
+
+			if (robbedAgent)
+			{
+				//tell the robbed agent to recalc their path since it was burgled...
+				robbedAgent->RecalculatePathToFood();
 			}
 
 			//if we have path, we are not longer at this location
@@ -50,7 +66,7 @@ void AAgent::RecalculatePathToFood()
 		}
 		else
 		{
-			//we dont haev a path, we are still chilling here..
+			//we don't have a path, we are still chilling here..
 			startingNode->IdleObjectAtLocation = this;
 		}
 	}
@@ -83,12 +99,10 @@ void AAgent::ResetCurrentPath()
 #endif
 
 	//the entire path's grid nodes are no longer in use by this agent!
-	for (GridNode* gn : m_currentPath)
+	while (GetCurrentPathCount() > 0)
 	{
-		gn->SetAgentUsing(nullptr);
+		RemoveCurrentPathAt(0);
 	}
-
-	m_currentPath.Empty();
 }
 
 void AAgent::RemoveCurrentPathAt(int idx)
@@ -96,8 +110,12 @@ void AAgent::RemoveCurrentPathAt(int idx)
 	GridNode* gn = GetGridNodeOnCurrentPath(idx);
 	if (gn)
 	{
-		//this grid nodes is no longer in use by this agent!
-		gn->SetAgentUsing(nullptr);
+		//only wipe the agent using if we were the one to use it!
+		if (gn->GetAgentUsing() == this)
+		{
+			//this grid nodes is no longer in use by this agent!
+			gn->SetAgentUsing(nullptr);
+		}
 
 		m_currentPath.RemoveAt(idx);
 	}

@@ -76,7 +76,7 @@ TArray<GridNode*> ALevelGenerator::CalculateAgentPath(GridNode* startNode)
 			}
 
 			//For Each (nextNode accessible from currentNode)
-			TArray<GridNode*> accessibleNodes = GetAccessibleNodes(currentNode);
+			TArray<GridNode*> accessibleNodes = GetAccessibleNodes(currentNode, startNode);
 			for (GridNode* nextNode : accessibleNodes)
 			{
 				//If (nextNode is in ClosedList)
@@ -385,7 +385,7 @@ GridNode* ALevelGenerator::RemoveNodeWithSmallestFitness(TArray<GridNode*>& open
 	return retVal;
 }
 
-TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode)
+TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode, GridNode* startNode)
 {
 	TArray<GridNode*> retVal;
 
@@ -405,7 +405,7 @@ TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode)
 	{
 		if (gn)
 		{
-			if (IsNodeAccessible(gn))
+			if (IsNodeAccessible(gn, startNode))
 			{
 				retVal.Add(gn);
 			}
@@ -415,7 +415,7 @@ TArray<GridNode*> ALevelGenerator::GetAccessibleNodes(GridNode* currentNode)
 	return retVal;
 }
 
-bool ALevelGenerator::IsNodeAccessible(GridNode* node)
+bool ALevelGenerator::IsNodeAccessible(GridNode* node, GridNode* startNode)
 {
 	bool retval = true;
 
@@ -436,8 +436,24 @@ bool ALevelGenerator::IsNodeAccessible(GridNode* node)
 			//if the path is in use
 			if (node->IsAgentUsing())
 			{
-				//avoid it!
-				retval = false;
+				//its a food node!
+				if (node->HasFood())
+				{
+					//if we arent closer
+					FVector2D startNodeLocation2D = startNode->GetGridNodeActorLocation();
+					FVector2D nodeLocation2D = node->GetGridNodeActorLocation();
+					float distFromStartnode = FVector::Dist2D(FVector(startNodeLocation2D.X, startNodeLocation2D.Y, 0), FVector(nodeLocation2D.X, nodeLocation2D.Y, 0));
+					if (!node->IsDistanceCloserThanAgentUsing(distFromStartnode))
+					{
+						//avoid it!
+						retval = false;
+					}
+				}
+				else //always avoid non-food in-use nodes
+				{
+					//avoid it!
+					retval = false;
+				}
 			}
 		}
 		else 

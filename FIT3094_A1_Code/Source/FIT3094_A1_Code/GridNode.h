@@ -66,6 +66,10 @@ public:
 
 	void SetAgentUsing(AAgent* newAgentUsing);
 	bool IsAgentUsing();
+	AAgent* GetAgentUsing() { return m_agentUsing; }
+
+	float GetDistanceOfAgentUsingToThisNode();
+	bool IsDistanceCloserThanAgentUsing(float dist);
 
 private:
 	AAgent* m_agentUsing = nullptr;
