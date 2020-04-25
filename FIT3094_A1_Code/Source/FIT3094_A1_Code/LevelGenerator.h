@@ -56,7 +56,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Entities")
 		TSubclassOf<AActor> FoodBlueprint;
 	UPROPERTY(EditAnywhere, Category = "Entities")
+		TSubclassOf<AActor> Food2Blueprint;
+	UPROPERTY(EditAnywhere, Category = "Entities")
 		TSubclassOf<AActor> AgentBlueprint;
+	UPROPERTY(EditAnywhere, Category = "Entities")
+		TSubclassOf<AActor> Agent2Blueprint;
 
 	TArray<GridNode*> CalculateAgentPath(GridNode* startNode);
 

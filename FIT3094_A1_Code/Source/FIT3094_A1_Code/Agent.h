@@ -7,9 +7,16 @@
 #include "GameFramework/Actor.h"
 #include "Agent.generated.h"
 
+UENUM()
+enum class EAgentType
+{
+	CARNIVORE = 0,
+	VEGETARIAN,
+
+	MAX_COUNT
+};
+
 class ALevelGenerator;
-
-
 
 #define AGENT_MAX_HEALTH (50)
 #define AGENT_SPEED (500) //100 #2fix_changeback
@@ -65,4 +72,7 @@ public:
 private:
 	TArray<GridNode*> m_currentPath;
 	ALevelGenerator* m_levelGenerator = nullptr;
+
+	UPROPERTY(EditAnywhere)
+		EAgentType m_agentType = EAgentType::CARNIVORE;
 };

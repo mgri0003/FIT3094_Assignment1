@@ -6,6 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "Food.generated.h"
 
+UENUM()
+enum class EFoodType
+{
+	MEAT = 0,
+	VEGETABLE,
+
+	MAX_COUNT
+};
+
 UCLASS()
 class FIT3094_A1_CODE_API AFood : public AActor
 {
@@ -14,8 +23,6 @@ class FIT3094_A1_CODE_API AFood : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AFood();
-
-	bool IsEaten;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -24,5 +31,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	UPROPERTY(EditAnywhere)
+		EFoodType m_foodType = EFoodType::MEAT;
 
 };
